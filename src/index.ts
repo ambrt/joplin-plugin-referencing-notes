@@ -1,6 +1,10 @@
 import joplin from 'api';
 import { MenuItemLocation, ToolbarButtonLocation, ContentScriptType } from 'api/types';
 
+function escapeTitleText(text: string) {
+	return text.replace(/(\[|\])/g, '\\$1');
+}
+
 joplin.plugins.register({
 	onStart: async function () {
 		await joplin.commands.register({
@@ -10,13 +14,24 @@ joplin.plugins.register({
 			execute: async () => {
 
 				let data = await joplin.workspace.selectedNote();
-				let body = data.body
-				await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'] }).then(res => { data = res });
+				let body = data.body;
+				let notes
+				let has_more =true
+				let page = 1
 				let references = "\n\n## References\n";
-				for (let i = 0; i < data.items.length; i++) {
-					let element = data.items[i];
-					references = references + "\n" + `[${element.title}](:/${element.id})`;
+				while (has_more) {
+					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page:page });
+				
+					for (let i = 0; i < notes.items.length; i++) {
+						let element = notes.items[i];
+						references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
+					}	
+					if (notes.has_more) { page = page + 1 } else { has_more = false }
+	
 				}
+
+
+				
 				let newData = body+references
 				await joplin.commands.execute('textSelectAll')
 				await joplin.commands.execute('replaceSelection', newData)

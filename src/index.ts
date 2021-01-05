@@ -7,6 +7,17 @@ function escapeTitleText(text: string) {
 
 joplin.plugins.register({
 	onStart: async function () {
+		await joplin.settings.registerSection('myBacklinksCustomSection', {
+			label: 'Backlinks',
+			iconName: 'fas fa-hand-point-left',
+		});
+		await joplin.settings.registerSetting('myBacklinksCustomSetting', {
+			value: "\\n\\n## References\\n",
+			type: 2,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: 'Heading above list of backlinks (use "\\n" as a new line)',
+		});
 		await joplin.commands.register({
 			name: "insertBackReferences",
 			label: "Insert references",
@@ -18,7 +29,7 @@ joplin.plugins.register({
 				let notes
 				let has_more =true
 				let page = 1
-				let references = "\n\n## References\n";
+				let references = await joplin.settings.value('myBacklinksCustomSetting');
 				while (has_more) {
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page:page });
 				
@@ -32,7 +43,7 @@ joplin.plugins.register({
 
 
 				
-				let newData = body+references
+				let newData = body+references.replace(/\\n/g,"\n")
 				await joplin.commands.execute('textSelectAll')
 				await joplin.commands.execute('replaceSelection', newData)
 

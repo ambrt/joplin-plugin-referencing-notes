@@ -1,10 +1,10 @@
 {
 	"manifest_version": 1,
-	"id": "ambrt.referencingNotes",
+	"id": "joplin.plugin.ambrt.backlinksToNote",
 	"app_min_version": "1.5",
-	"version": "1.0.0",
-	"name": "Referencing Notes",
-	"description": "Creates links to notes that refer actual note",
+	"version": "1.0.3",
+	"name": "Backlinks to note",
+	"description": "Creates backlinks to opened note",
 	"author": "a",
-	"homepage_url": "a"
+	"homepage_url": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632"
 }

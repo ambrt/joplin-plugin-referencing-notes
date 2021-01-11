@@ -70,11 +70,11 @@ joplin.plugins.register({
 		await joplin.views.toolbarButtons.create('insertRefsToolbar', 'insertBackReferences', ToolbarButtonLocation.EditorToolbar);
 		await joplin.views.menuItems.create('inserRefsMenu', 'insertBackReferences', MenuItemLocation.Note, {accelerator:"Ctrl+Alt+B"});
 		await joplin.commands.register({
-			name: 'getFun',
-			label: 'Go to tag from render view2',
+			name: 'getCont',
+			label: 'returns backlinks html',
 			execute: async () => {
 				console.log("got called getFun()")
-				return "fun fun fun"
+				return "<b> testing html from command</b>"
 			},
 		});
 		console.info('Test plugin started!');

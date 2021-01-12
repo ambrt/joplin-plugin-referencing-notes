@@ -2,7 +2,7 @@
 	"manifest_version": 1,
 	"id": "joplin.plugin.ambrt.backlinksToNote",
 	"app_min_version": "1.5",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"name": "Backlinks to note",
 	"description": "Creates backlinks to opened note",
 	"author": "a",

@@ -13,13 +13,25 @@ joplin.plugins.register({
 			label: 'Backlinks',
 			iconName: 'fas fa-hand-point-left',
 		});
-		await joplin.settings.registerSetting('myBacklinksCustomSetting', {
+		await joplin.settings.registerSetting('myBacklinksCustomSettingHeader', {
 			value: "\\n\\n## References\\n",
 			type: 2,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Heading above list of backlinks (use "\\n" as a new line)',
 		});
+		/*
+		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoMarkdown', {
+			value: true,
+			type: 3,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: 'Automatic backlinks section on every note',
+		});
+*/
+
+
+
 		await joplin.settings.registerSetting('myBacklinksCustomSettingTopOrBottom', {
 			value: true,
 			type: 3,
@@ -39,7 +51,7 @@ joplin.plugins.register({
 				let notes
 				let has_more = true
 				let page = 1
-				let references = await joplin.settings.value('myBacklinksCustomSetting');
+				let references = await joplin.settings.value('myBacklinksCustomSettingHeader');
 				while (has_more) {
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
 
@@ -85,12 +97,13 @@ joplin.plugins.register({
 		await joplin.contentScripts.register(
 			ContentScriptType.MarkdownItPlugin,
 			contentScriptId,
-			'./contentScriptMarkdownIt.js'
+			'./notesReferences.js'
 		);
 
-		await joplin.contentScripts.onMessage(contentScriptId, async (message: any) => {
+			
 			//get content
-			if (message.type == "getContent") {
+			
+			if (message.type == "getContent" && await joplin.settings.value('myBacklinksCustomSettingAutoMarkdown'); ) {
 				let data = await joplin.workspace.selectedNote();
 				let body = data.body;
 				let notes

@@ -144,7 +144,7 @@ joplin.plugins.register({
 					console.log(message);
 					console.info("some error occured");
 					console.info(message);
-					return false
+					return ''
 				}
 
 

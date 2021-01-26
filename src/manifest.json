@@ -5,6 +5,6 @@
 	"version": "2.0.0",
 	"name": "Automatic Backlinks to note",
 	"description": "Creates backlinks to opened note, also in automatic way",
-	"author": "a",
+	"author": "ambrth",
 	"homepage_url": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632"
 }

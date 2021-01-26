@@ -111,9 +111,10 @@ joplin.plugins.register({
 							let element = notes.items[i];
 							//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 							references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
-							if (notes.has_more) { page = page + 1 } else { has_more = false }
+							
 
 						}
+						if (notes.has_more) { page = page + 1 } else { has_more = false }
 					}
 					let newData = references
 					let topOrBottom = await joplin.settings.value('myBacklinksCustomSettingTopOrBottom');

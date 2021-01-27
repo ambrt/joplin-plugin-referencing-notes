@@ -74,8 +74,12 @@ joplin.plugins.register({
 
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
-						references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
-						thereAreNotes=true
+						let ignore = element.body.includes("<!-- backlinks-ignore -->")
+						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
+						if (!ignore) {
+							references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
+							thereAreNotes = true
+						}
 					}
 					if (notes.has_more) { page = page + 1 } else { has_more = false }
 
@@ -83,7 +87,7 @@ joplin.plugins.register({
 
 				let newData
 				let topOrBottom = await joplin.settings.value('myBacklinksCustomSettingTopOrBottom');
-				if(!thereAreNotes && useManualHint){
+				if (!thereAreNotes && useManualHint) {
 					references = references + "\n<small><font color='grey'><i>No backlinks</i></font></small>"
 				}
 				if (topOrBottom) {
@@ -129,16 +133,19 @@ joplin.plugins.register({
 
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
+						let ignore = element.body.includes("<!-- backlinks-ignore -->")
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
-						references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
-						thereAreAutoBacklinks = true
+						if (!ignore) {
+							references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
+							thereAreAutoBacklinks = true
+						}
 
 
 					}
 					if (notes.has_more) { page = page + 1 } else { has_more = false }
 				}
 
-				if(!thereAreAutoBacklinks){
+				if (!thereAreAutoBacklinks) {
 					references = references + "\n<small><font color='grey'><i>No backlinks</i></font></small>"
 				}
 				let newData = references
@@ -155,11 +162,11 @@ joplin.plugins.register({
 				}
 
 
-				let response=''
-				if(!hideIfNoBacklinks){
+				let response = ''
+				if (!hideIfNoBacklinks) {
 					response = `<h3>${referenceHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
 				}
-				
+
 
 				return response;
 

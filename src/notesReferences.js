@@ -10,6 +10,7 @@ module.exports = {
                 function render_footnote_block_open2(tokens, idx, options) {
                     
                     const postMessageWithResponseTest = `
+                    console.log('sending message');
                     webviewApi.postMessage('${contentScriptId}', {type:'getContent'}).then(function(response) {
                         console.info('Got response in Markdown-it content script: ' + response);
                         document.getElementById('backs').innerHTML=response;
@@ -36,7 +37,8 @@ module.exports = {
                     
                     state.tokens.push(token);
                     console.log("foot tokens");
-                    console.log(state.tokens)
+                    console.log(state.tokens);
+
               }
               md.core.ruler.after('inline', 'footnote_tail2', footnote_tail2);
             

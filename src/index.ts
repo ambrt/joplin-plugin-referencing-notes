@@ -118,6 +118,8 @@ joplin.plugins.register({
 			if (message.type == "getContent" && isAuto) {
 				console.log("getting content")
 				let data = await joplin.workspace.selectedNote();
+				console.log('activeNote')
+				console.log(data)
 				let body = data.body;
 				let notes
 				let has_more = true
@@ -133,9 +135,12 @@ joplin.plugins.register({
 
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
+						
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
+						
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 						if (!ignore) {
+
 							references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
 						}
@@ -163,9 +168,18 @@ joplin.plugins.register({
 
 
 				let response = ''
-				if (!hideIfNoBacklinks) {
+				if (hideIfNoBacklinks && !thereAreAutoBacklinks){
+						// no backlinks to show
+
+				} else
+				{
 					response = `<h3>${referenceHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
 				}
+				
+					
+					
+				
+				
 
 
 				return response;

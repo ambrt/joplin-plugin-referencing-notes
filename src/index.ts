@@ -9,6 +9,7 @@ joplin.plugins.register({
 	onStart: async function () {
 		//keyboard shortcut
 		//top down append
+
 		await joplin.settings.registerSection('myBacklinksCustomSection', {
 			label: 'Backlinks',
 			iconName: 'fas fa-hand-point-left',
@@ -18,7 +19,7 @@ joplin.plugins.register({
 			type: 2,
 			section: 'myBacklinksCustomSection',
 			public: true,
-			label: 'Heading above list of backlinks (use "\\n" as a new line)',
+			label: 'Heading above list of manual backlinks (use "\\n" as a new line)',
 		});
 
 		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoMarkdown', {
@@ -54,6 +55,56 @@ joplin.plugins.register({
 			public: true,
 			label: "Use text hint if there are no backlinks (manual insert)"
 		});
+		await joplin.settings.registerSetting('myBacklinksCustomSettingUsePanel', {
+			value: false,
+			type: 3,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: "Show backlinks in panel (might require restart)"
+		});
+		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoHeader', {
+			value: "Backlinks",
+			type: 2,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: 'Heading above list of backlinks in automatic section and panel',
+		})
+
+		let usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
+		
+
+
+
+
+		let panel = await joplin.views.panels.create("backlinksPanel");
+		await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
+		
+		if (usePanel) {
+
+			await joplin.views.panels.show(panel)
+		}
+		else{
+			await joplin.views.panels.hide(panel)
+		}
+
+		joplin.settings.onChange(async () => {
+
+			let usePanel2 = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
+			console.log("panel via option");
+
+			console.log(usePanel2)
+			if (usePanel2) {
+				
+					await joplin.views.panels.show(panel)
+				
+				
+			} else {
+				
+					await joplin.views.panels.hide(panel)
+				
+			}
+
+		})
 
 		await joplin.commands.register({
 			name: "insertBackReferences",
@@ -109,6 +160,8 @@ joplin.plugins.register({
 		let contentScriptId = "backlinks"
 
 		await joplin.contentScripts.onMessage(contentScriptId, async (message: any) => {
+			// automatic backlinks in preview
+
 			console.info('PostMessagePlugin (CodeMirror ContentScript): Got message:', message);
 
 			let topOrBottom = await joplin.settings.value('myBacklinksCustomSettingTopOrBottom');
@@ -124,7 +177,7 @@ joplin.plugins.register({
 				let notes
 				let has_more = true
 				let page = 1
-				let referenceHeader = await joplin.settings.value('myBacklinksCustomSettingHeader');
+				let referenceHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
 				let hideIfNoBacklinks = await joplin.settings.value('myBacklinksCustomHideBacklinksIfNoneAuto');
 				let notesHtml
 				let references = ""
@@ -135,9 +188,9 @@ joplin.plugins.register({
 
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
-						
+
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
-						
+
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 						if (!ignore) {
 
@@ -168,18 +221,17 @@ joplin.plugins.register({
 
 
 				let response = ''
-				if (hideIfNoBacklinks && !thereAreAutoBacklinks){
-						// no backlinks to show
+				if (hideIfNoBacklinks && !thereAreAutoBacklinks) {
+					// no backlinks to show
 
-				} else
-				{
+				} else {
 					response = `<h3>${referenceHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
 				}
-				
-					
-					
-				
-				
+
+
+
+
+
 
 
 				return response;
@@ -191,10 +243,8 @@ joplin.plugins.register({
 			}
 			else {
 
-				console.log("some error occured");
+				//console.log("some error occured");
 				console.log(message);
-				console.info("some error occured");
-				console.info(message);
 				return ''
 			}
 
@@ -202,7 +252,68 @@ joplin.plugins.register({
 
 
 		});
+		
+		//panel
+		joplin.workspace.onNoteSelectionChange(async ()=>{
+			usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
+			if(usePanel){
 
+				let panelHtml;
+				console.log("getting content for panel")
+				let data = await joplin.workspace.selectedNote();
+				console.log('activeNote')
+				console.log(data)
+				let body = data.body;
+				let notes
+				let has_more = true
+				let page = 1
+				let panelHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
+				let references = ""
+				let thereAreAutoBacklinks = false
+				while (has_more) {
+					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
+					console.log(notes)
+
+					for (let i = 0; i < notes.items.length; i++) {
+						let element = notes.items[i];
+
+						let ignore = element.body.includes("<!-- backlinks-ignore -->")
+
+						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
+						if (!ignore) {
+
+							references = references + "" + `<a href="#" onclick="webviewApi.postMessage({type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
+							thereAreAutoBacklinks = true
+						}
+
+
+					}
+					if (notes.has_more) { page = page + 1 } else { has_more = false }
+				}
+
+				if (!thereAreAutoBacklinks) {
+					references = references + "\n<small><font color='grey'><i>No backlinks</i></font></small>"
+				}
+				let newData = references
+
+				let response = ''
+				
+				
+					response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
+				
+
+				panelHtml=response
+
+
+				await joplin.views.panels.setHtml(panel, panelHtml)
+			}
+
+
+		})
+
+	 await joplin.views.panels.onMessage(panel, async (message)=>{
+			await joplin.commands.execute("openNote", message.noteId)
+		})
 
 		console.info('Test plugin started!');
 

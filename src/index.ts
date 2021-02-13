@@ -84,8 +84,9 @@ joplin.plugins.register({
 			await joplin.views.panels.show(panel)
 		}
 		else{
-			panel = await joplin.views.panels.create("backlinksPanel");
-			await joplin.views.panels.hide(panel)
+			// hiding also doesn't work for ghost panel issue, commented for brevity
+			//panel = await joplin.views.panels.create("backlinksPanel");
+			//await joplin.views.panels.hide(panel)
 		}
 		/*
 		joplin.settings.onChange(async () => {

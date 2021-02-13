@@ -71,19 +71,19 @@ joplin.plugins.register({
 		})
 
 		let usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
-		
 
 
 
-		
+
+
 		let panel
 		if (usePanel) {
 			panel = await joplin.views.panels.create("backlinksPanel");
 			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
-			
+
 			await joplin.views.panels.show(panel)
 		}
-		else{
+		else {
 			// hiding also doesn't work for ghost panel issue, commented for brevity
 			//panel = await joplin.views.panels.create("backlinksPanel");
 			//await joplin.views.panels.hide(panel)
@@ -254,12 +254,12 @@ joplin.plugins.register({
 
 
 		});
-		
+
 		//panel
-		
-		joplin.workspace.onNoteSelectionChange(async ()=>{
+
+		joplin.workspace.onNoteSelectionChange(async () => {
 			usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
-			if(usePanel){
+			if (usePanel) {
 
 				let panelHtml;
 				console.log("getting content for panel")
@@ -300,12 +300,12 @@ joplin.plugins.register({
 				let newData = references
 
 				let response = ''
-				
-				
-					response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
-				
 
-				panelHtml=response
+
+				response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
+
+
+				panelHtml = response
 
 
 				await joplin.views.panels.setHtml(panel, panelHtml)
@@ -314,7 +314,7 @@ joplin.plugins.register({
 
 		})
 
-	 await joplin.views.panels.onMessage(panel, async (message)=>{
+		await joplin.views.panels.onMessage(panel, async (message) => {
 			await joplin.commands.execute("openNote", message.noteId)
 		})
 

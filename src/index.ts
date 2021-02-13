@@ -60,7 +60,7 @@ joplin.plugins.register({
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
-			label: "Show backlinks in panel (might require restart)"
+			label: "Show backlinks in panel (requires restart)"
 		});
 		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoHeader', {
 			value: "Backlinks",
@@ -75,18 +75,19 @@ joplin.plugins.register({
 
 
 
-
-		let panel = await joplin.views.panels.create("backlinksPanel");
-		await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
 		
+		let panel
 		if (usePanel) {
-
+			panel = await joplin.views.panels.create("backlinksPanel");
+			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
+			
 			await joplin.views.panels.show(panel)
 		}
 		else{
+			panel = await joplin.views.panels.create("backlinksPanel");
 			await joplin.views.panels.hide(panel)
 		}
-
+		/*
 		joplin.settings.onChange(async () => {
 
 			let usePanel2 = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
@@ -105,7 +106,7 @@ joplin.plugins.register({
 			}
 
 		})
-
+*/
 		await joplin.commands.register({
 			name: "insertBackReferences",
 			label: "Insert backlinks",
@@ -254,6 +255,7 @@ joplin.plugins.register({
 		});
 		
 		//panel
+		
 		joplin.workspace.onNoteSelectionChange(async ()=>{
 			usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
 			if(usePanel){

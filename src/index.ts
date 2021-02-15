@@ -76,15 +76,15 @@ joplin.plugins.register({
 
 
 
-		let panel = await joplin.views.panels.create("backlinksPanel");
-		await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
+		let panel
 		
 		if (usePanel) {
-
+			panel = await joplin.views.panels.create("backlinksPanel");
+			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
 			await joplin.views.panels.show(panel)
 		}
 		else{
-			await joplin.views.panels.hide(panel)
+			//await joplin.views.panels.hide(panel)
 		}
 
 		joplin.settings.onChange(async () => {

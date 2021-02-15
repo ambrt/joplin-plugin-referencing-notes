@@ -320,9 +320,15 @@ joplin.plugins.register({
 		})
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 	 await joplin.views.panels.onMessage(panel, async (message)=>{
 =======
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 		if(panel){

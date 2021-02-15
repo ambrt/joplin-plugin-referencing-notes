@@ -1,6 +1,6 @@
 {
   "name": "joplin-plugin-backlinks",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "homepage": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632",
   "description": "",
   "scripts": {

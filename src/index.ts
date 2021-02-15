@@ -299,7 +299,7 @@ joplin.plugins.register({
 				let response = ''
 				
 				
-					response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
+					response = `${panelHeader.replace(/\\n/g, "<br>")}${newData}`
 				
 
 				panelHtml=response

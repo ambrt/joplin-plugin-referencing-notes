@@ -199,17 +199,22 @@ joplin.plugins.register({
 					}
 
 					let html = "Note removed from <br>backlinks ignore list"
+					alert(html.replace("<br>","\n"))
+					/*
 					let chacheBust = new Date().getTime()
 					html = html + `<input type='hidden' value='${chacheBust}'`
 					await dialogs.setHtml(backlinksIgnoreOffDialog, html)
 					await dialogs.open(backlinksIgnoreOffDialog)
+					*/
 				} else {
 					//add to list
 					let html = "Note added to <br>backlinks ignore list"
-					let chacheBust = new Date().getTime()
+					alert(html.replace("<br>","\n"))
+					/*let chacheBust = new Date().getTime()
 					html = html + `<input type='hidden' value='${chacheBust}'`
 					await dialogs.setHtml(backlinksIgnoreOnDialog, html)
 					await dialogs.open(backlinksIgnoreOnDialog)
+					*/
 					ignoreListArray.push(toToggleId)
 				}
 				await joplin.settings.setValue('myBacklinksCustomSettingIgnoreList', ignoreListArray);
@@ -224,22 +229,39 @@ joplin.plugins.register({
 			iconName: "fas fa-hand-point-left",
 			execute: async () => {
 
-				let htmlStart = "<b>Notes in ignore list</b><table>";
+				let htmlStart = "<b>Notes in ignore list</b><form name='goto'><select style='width:100%' name='gotoid' size='6'>";
 				let html = ""
-				let htmlEnd = "</table>"
+				let htmlEnd = "</select></form>"
 				let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
 				console.log(ignoreListArray)
 				for (let i = 0; i < ignoreListArray.length; i++) {
 					let el = ignoreListArray[i]
 					let note = await joplin.data.get(['notes', el], { fields: ['id', 'title', 'body'] });
-					html = html + `<tr><td>${note.title}</td></tr>`
+					html = html + `<option value="${note.id}">${note.title}</option>`
 				}
 				if (html == "") { html = "No notes in backlinks ignore list" }
 				let chacheBust = new Date().getTime()
 				htmlEnd = htmlEnd + `<input type='hidden' value='${chacheBust}'`
 				html = htmlStart + html + htmlEnd
 				await dialogs.setHtml(backlinksIgnoreListDialog, html)
-				await dialogs.open(backlinksIgnoreListDialog)
+				await dialogs.setButtons(backlinksIgnoreListDialog, [
+					{
+						id: 'ok',
+						title:'Go to selected item'
+					},
+					{
+						id: 'cancel',
+					}
+				]);
+				let goToNoteId = await dialogs.open(backlinksIgnoreListDialog)
+				if(goToNoteId.id=="ok"){
+				try{
+					await joplin.commands.execute("openNote",goToNoteId.formData.goto.gotoid);
+				}catch(err){
+					console.error(err)
+				}
+			}
+
 
 
 

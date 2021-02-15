@@ -319,9 +319,12 @@ joplin.plugins.register({
 
 		})
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 	 await joplin.views.panels.onMessage(panel, async (message)=>{
 =======
+=======
+>>>>>>> Stashed changes
 		if(panel){
 		await joplin.views.panels.onMessage(panel, async (message) => {
 >>>>>>> Stashed changes

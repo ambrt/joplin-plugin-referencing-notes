@@ -63,11 +63,11 @@ joplin.plugins.register({
 			label: "Show backlinks in panel (might require restart)"
 		});
 		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoHeader', {
-			value: "Backlinks",
+			value: "Backlinks<br>",
 			type: 2,
 			section: 'myBacklinksCustomSection',
 			public: true,
-			label: 'Heading above list of backlinks in automatic section and panel',
+			label: 'Heading above list of backlinks in automatic section and panel (can use html)',
 		})
 
 		let usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
@@ -225,7 +225,7 @@ joplin.plugins.register({
 					// no backlinks to show
 
 				} else {
-					response = `<h3>${referenceHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
+					response = `${referenceHeader.replace(/\\n/g, "<br>")}${newData}`
 				}
 
 
@@ -302,7 +302,15 @@ joplin.plugins.register({
 					response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
 				
 
+<<<<<<< Updated upstream
 				panelHtml=response
+=======
+
+				response = `${panelHeader.replace(/\\n/g, "<br>")}<br>${newData}`
+
+
+				panelHtml = response
+>>>>>>> Stashed changes
 
 
 				await joplin.views.panels.setHtml(panel, panelHtml)
@@ -310,10 +318,16 @@ joplin.plugins.register({
 
 
 		})
+<<<<<<< Updated upstream
 
 	 await joplin.views.panels.onMessage(panel, async (message)=>{
+=======
+		if(panel){
+		await joplin.views.panels.onMessage(panel, async (message) => {
+>>>>>>> Stashed changes
 			await joplin.commands.execute("openNote", message.noteId)
 		})
+	}
 
 		console.info('Test plugin started!');
 

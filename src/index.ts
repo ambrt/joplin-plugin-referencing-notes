@@ -302,15 +302,7 @@ joplin.plugins.register({
 					response = `<h3>${panelHeader.replace(/\\n/g, "<br>")}</h3>${newData}`
 				
 
-<<<<<<< Updated upstream
 				panelHtml=response
-=======
-
-				response = `${panelHeader.replace(/\\n/g, "<br>")}<br>${newData}`
-
-
-				panelHtml = response
->>>>>>> Stashed changes
 
 
 				await joplin.views.panels.setHtml(panel, panelHtml)
@@ -318,25 +310,14 @@ joplin.plugins.register({
 
 
 		})
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
-	 await joplin.views.panels.onMessage(panel, async (message)=>{
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 		if(panel){
-		await joplin.views.panels.onMessage(panel, async (message) => {
->>>>>>> Stashed changes
+	 await joplin.views.panels.onMessage(panel, async (message)=>{
+
 			await joplin.commands.execute("openNote", message.noteId)
 		})
 	}
+
 
 		console.info('Test plugin started!');
 

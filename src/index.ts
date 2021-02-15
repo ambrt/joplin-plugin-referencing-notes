@@ -70,20 +70,29 @@ joplin.plugins.register({
 			label: 'Heading above list of backlinks in automatic section and panel (can use html)',
 		})
 
+		await joplin.settings.registerSetting('myBacklinksCustomSettingIgnoreList', {
+			value: [],
+			type: 4,
+			section: 'myBacklinksCustomSection',
+			public: false,
+			label: "Ignore notes list"
+
+		})
+
 		let usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
-		
+
 
 
 
 
 		let panel
-		
+
 		if (usePanel) {
 			panel = await joplin.views.panels.create("backlinksPanel");
 			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
 			await joplin.views.panels.show(panel)
 		}
-		else{
+		else {
 			//await joplin.views.panels.hide(panel)
 		}
 
@@ -94,14 +103,14 @@ joplin.plugins.register({
 
 			console.log(usePanel2)
 			if (usePanel2) {
-				
-					await joplin.views.panels.show(panel)
-				
-				
+
+				await joplin.views.panels.show(panel)
+
+
 			} else {
-				
-					await joplin.views.panels.hide(panel)
-				
+
+				await joplin.views.panels.hide(panel)
+
 			}
 
 		})
@@ -120,14 +129,16 @@ joplin.plugins.register({
 				let references = await joplin.settings.value('myBacklinksCustomSettingHeader');
 				let thereAreNotes = false
 				let useManualHint = await joplin.settings.value('myBacklinksCustomSettingUseHint')
+				let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
 				while (has_more) {
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
-
+					
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
-						if (!ignore) {
+						let inIgnoreList = ignoreListArray.includes(element.id)
+						if (!(ignore || inIgnoreList)) {
 							references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 							thereAreNotes = true
 						}
@@ -155,6 +166,99 @@ joplin.plugins.register({
 
 			}
 		});
+		const dialogs = joplin.views.dialogs;
+		const backlinksIgnoreOnDialog = await dialogs.create('myBacklinksIgnoreOn');
+		const backlinksIgnoreOffDialog = await dialogs.create('myBacklinksIgnoreOff');
+
+		await joplin.commands.register({
+			name: "backlinksIgnoreListAddCurrent",
+			label: "Add current to ignore list",
+			iconName: "fas fa-hand-point-left",
+			execute: async () => {
+				//note implemented
+
+			}
+
+		})
+		await joplin.commands.register({
+			name: "backlinksIgnoreListToggleCurrent",
+			label: "Toggle current note in ignore list",
+			iconName: "fas fa-hand-point-left",
+			execute: async () => {
+				let currentNote = await joplin.workspace.selectedNote()
+				let toToggleId = currentNote.id
+
+
+
+				let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
+				if (ignoreListArray.includes(toToggleId)) {
+					// remove from list
+					let index = ignoreListArray.indexOf(toToggleId);
+					if (index > -1) {
+						ignoreListArray.splice(index, 1);
+					}
+
+					let html = "Note removed from <br>backlinks ignore list"
+					let chacheBust = new Date().getTime()
+					html = html + `<input type='hidden' value='${chacheBust}'`
+					await dialogs.setHtml(backlinksIgnoreOffDialog, html)
+					await dialogs.open(backlinksIgnoreOffDialog)
+				} else {
+					//add to list
+					let html = "Note added to <br>backlinks ignore list"
+					let chacheBust = new Date().getTime()
+					html = html + `<input type='hidden' value='${chacheBust}'`
+					await dialogs.setHtml(backlinksIgnoreOnDialog, html)
+					await dialogs.open(backlinksIgnoreOnDialog)
+					ignoreListArray.push(toToggleId)
+				}
+				await joplin.settings.setValue('myBacklinksCustomSettingIgnoreList', ignoreListArray);
+			}
+
+		})
+
+		const backlinksIgnoreListDialog = await dialogs.create('myBacklinksIgnoreList');
+		await joplin.commands.register({
+			name: "backlinksIgnoreListOpen",
+			label: "View Backlinks ignore list",
+			iconName: "fas fa-hand-point-left",
+			execute: async () => {
+
+				let htmlStart = "<b>Notes in ignore list</b><table>";
+				let html = ""
+				let htmlEnd = "</table>"
+				let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
+				console.log(ignoreListArray)
+				for (let i = 0; i < ignoreListArray.length; i++) {
+					let el = ignoreListArray[i]
+					let note = await joplin.data.get(['notes', el], { fields: ['id', 'title', 'body'] });
+					html = html + `<tr><td>${note.title}</td></tr>`
+				}
+				if (html == "") { html = "No notes in backlinks ignore list" }
+				let chacheBust = new Date().getTime()
+				htmlEnd = htmlEnd + `<input type='hidden' value='${chacheBust}'`
+				html = htmlStart + html + htmlEnd
+				await dialogs.setHtml(backlinksIgnoreListDialog, html)
+				await dialogs.open(backlinksIgnoreListDialog)
+
+
+
+
+
+			}
+
+		})
+		// Menu for ignore list
+		await joplin.views.menus.create('myBacklinksIgnoreMenu', 'Backlinks ignore', [
+			{
+				commandName: "backlinksIgnoreListOpen",
+				accelerator: "Ctrl+Alt+L"
+			},
+			{
+				commandName: "backlinksIgnoreListToggleCurrent",
+				accelerator: "Ctrl+Alt+T"
+			}
+		]);
 		await joplin.views.toolbarButtons.create('insertRefsToolbar', 'insertBackReferences', ToolbarButtonLocation.EditorToolbar);
 		await joplin.views.menuItems.create('inserRefsMenu', 'insertBackReferences', MenuItemLocation.Note, { accelerator: "Ctrl+Alt+B" });
 		let contentScriptId = "backlinks"
@@ -185,14 +289,15 @@ joplin.plugins.register({
 				while (has_more) {
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
 					console.log(notes)
-
+					let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
-
+						
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
 
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
-						if (!ignore) {
+						let inIgnoreList = ignoreListArray.includes(element.id)
+						if (!(ignore || inIgnoreList)) {
 
 							references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
@@ -252,11 +357,11 @@ joplin.plugins.register({
 
 
 		});
-		
+
 		//panel
-		joplin.workspace.onNoteSelectionChange(async ()=>{
+		joplin.workspace.onNoteSelectionChange(async () => {
 			usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
-			if(usePanel){
+			if (usePanel) {
 
 				let panelHtml;
 				console.log("getting content for panel")
@@ -274,13 +379,18 @@ joplin.plugins.register({
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
 					console.log(notes)
 
+					let ignoreListArray = await joplin.settings.value('myBacklinksCustomSettingIgnoreList');
+
+
+
+
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
 
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
-
+						let inIgnoreList = ignoreListArray.includes(element.id)
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
-						if (!ignore) {
+						if (!(ignore || inIgnoreList)) {
 
 							references = references + "" + `<a href="#" onclick="webviewApi.postMessage({type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
@@ -297,12 +407,12 @@ joplin.plugins.register({
 				let newData = references
 
 				let response = ''
-				
-				
-					response = `${panelHeader.replace(/\\n/g, "<br>")}${newData}`
-				
 
-				panelHtml=response
+
+				response = `${panelHeader.replace(/\\n/g, "<br>")}${newData}`
+
+
+				panelHtml = response
 
 
 				await joplin.views.panels.setHtml(panel, panelHtml)
@@ -311,12 +421,12 @@ joplin.plugins.register({
 
 		})
 
-		if(panel){
-	 await joplin.views.panels.onMessage(panel, async (message)=>{
+		if (panel) {
+			await joplin.views.panels.onMessage(panel, async (message) => {
 
-			await joplin.commands.execute("openNote", message.noteId)
-		})
-	}
+				await joplin.commands.execute("openNote", message.noteId)
+			})
+		}
 
 
 		console.info('Test plugin started!');

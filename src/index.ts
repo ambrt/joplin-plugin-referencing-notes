@@ -90,6 +90,8 @@ joplin.plugins.register({
 		if (usePanel) {
 			panel = await joplin.views.panels.create("backlinksPanel");
 			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
+			//await panels.addScript(view, './webview.js');
+			await joplin.views.panels.addScript(panel, './panel.css');
 			await joplin.views.panels.show(panel)
 		}
 		else {

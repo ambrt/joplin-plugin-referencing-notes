@@ -46,7 +46,7 @@ joplin.plugins.register({
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
-			label: "Hide auto-backlinks section if there are no backlinks"
+			label: "Hide auto-backlinks section if there are no backlinks (works for preview only, not for panel)"
 		});
 		await joplin.settings.registerSetting('myBacklinksCustomSettingUseHint', {
 			value: true,
@@ -55,13 +55,7 @@ joplin.plugins.register({
 			public: true,
 			label: "Use text hint if there are no backlinks (manual insert)"
 		});
-		await joplin.settings.registerSetting('myBacklinksCustomSettingUsePanel', {
-			value: false,
-			type: 3,
-			section: 'myBacklinksCustomSection',
-			public: true,
-			label: "Show backlinks in panel (might require restart)"
-		});
+		
 		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoHeader', {
 			value: "Backlinks<br>",
 			type: 2,
@@ -69,6 +63,21 @@ joplin.plugins.register({
 			public: true,
 			label: 'Heading above list of backlinks in automatic section and panel (can use html)',
 		})
+		await joplin.settings.registerSetting('myBacklinksCustomSettingPanelFontAnchors', {
+			value: 13,
+			type: 1,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: 'Font size of links in panel (switch notes to see effect)',
+		})
+		await joplin.settings.registerSetting('myBacklinksCustomSettingUsePanel', {
+			value: false,
+			type: 3,
+			section: 'myBacklinksCustomSection',
+			public: true,
+			label: "Show backlinks in panel (might require restart)"
+		});
+
 
 		await joplin.settings.registerSetting('myBacklinksCustomSettingIgnoreList', {
 			value: [],
@@ -397,6 +406,7 @@ joplin.plugins.register({
 				let has_more = true
 				let page = 1
 				let panelHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
+				let panelLinksFontSize =await joplin.settings.value('myBacklinksCustomSettingPanelFontAnchors');
 				let references = ""
 				let thereAreAutoBacklinks = false
 				while (has_more) {
@@ -434,10 +444,10 @@ joplin.plugins.register({
 
 
 				response = `${panelHeader.replace(/\\n/g, "<br>")}${newData}`
-
+				
 
 				panelHtml = response
-
+				panelHtml = `<style>a { font-size:${panelLinksFontSize}px; }</style>${panelHtml}`
 
 				await joplin.views.panels.setHtml(panel, panelHtml)
 			}

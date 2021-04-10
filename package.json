@@ -1,13 +1,13 @@
 {
   "name": "joplin-plugin-backlinks",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "homepage": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632",
   "description": "",
   "scripts": {
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
     "postinstall": "npm run dist",
     "distrun": "npm run dist && ~/.joplin/Joplin.AppImage --env dev",
-    "distrun2": "npm run dist && ~/Downloads/Joplin-1.7.4.AppImage --env dev",
+    "distrun2": "npm run dist && ~/Downloads/Joplin-1.7.11.AppImage --env dev",
     "prepare": "npm run dist",
     "update": "npm install -g generator-joplin && yo joplin --update",
     "run": "~/.joplin/Joplin.AppImage --env dev"

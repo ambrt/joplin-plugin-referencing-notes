@@ -14,79 +14,79 @@ joplin.plugins.register({
 			label: 'Backlinks',
 			iconName: 'fas fa-hand-point-left',
 		});
-		await joplin.settings.registerSetting('myBacklinksCustomSettingHeader', {
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingHeader': {
 			value: "\\n\\n## Backlinks\\n",
 			type: 2,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Heading above list of manual backlinks (use "\\n" as a new line)',
-		});
+		}});
 
-		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoMarkdown', {
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingAutoMarkdown': {
 			value: true,
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Automatic backlinks section on every note',
-		});
+    }});
 
 
 
 
-		await joplin.settings.registerSetting('myBacklinksCustomSettingTopOrBottom', {
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingTopOrBottom': {
 			value: true,
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Place "manual"  backlinks on the bottom (checked) or at the top (unchecked) ',
-		});
+    }});
 
-		await joplin.settings.registerSetting('myBacklinksCustomHideBacklinksIfNoneAuto', {
+		await joplin.settings.registerSettings({'myBacklinksCustomHideBacklinksIfNoneAuto': {
 			value: false,
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: "Hide auto-backlinks section if there are no backlinks (works for preview only, not for panel)"
-		});
-		await joplin.settings.registerSetting('myBacklinksCustomSettingUseHint', {
+    }});
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingUseHint': {
 			value: true,
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: "Use text hint if there are no backlinks (manual insert)"
-		});
+    }});
 		
-		await joplin.settings.registerSetting('myBacklinksCustomSettingAutoHeader', {
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingAutoHeader': {
 			value: "Backlinks<br>",
 			type: 2,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Heading above list of backlinks in automatic section and panel (can use html)',
-		})
-		await joplin.settings.registerSetting('myBacklinksCustomSettingPanelFontAnchors', {
+		}});
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingPanelFontAnchors': {
 			value: 13,
 			type: 1,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: 'Font size of links in panel (switch notes to see effect)',
-		})
-		await joplin.settings.registerSetting('myBacklinksCustomSettingUsePanel', {
+		}});
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingUsePanel': {
 			value: false,
 			type: 3,
 			section: 'myBacklinksCustomSection',
 			public: true,
 			label: "Show backlinks in panel (might require restart)"
-		});
+    }});
 
 
-		await joplin.settings.registerSetting('myBacklinksCustomSettingIgnoreList', {
+		await joplin.settings.registerSettings({'myBacklinksCustomSettingIgnoreList': {
 			value: [],
 			type: 4,
 			section: 'myBacklinksCustomSection',
 			public: false,
 			label: "Ignore notes list"
 
-		})
+    }});
 
 		let usePanel = await joplin.settings.value('myBacklinksCustomSettingUsePanel')
 

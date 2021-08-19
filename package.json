@@ -1,6 +1,6 @@
 {
   "name": "joplin-plugin-backlinks",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "homepage": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632",
   "description": "",
   "scripts": {
@@ -11,7 +11,6 @@
     "prepare": "npm run dist",
     "update": "npm install -g generator-joplin && yo joplin --update",
     "run": "~/.joplin/Joplin.AppImage --env dev"
-    
   },
   "keywords": [
     "joplin-plugin"

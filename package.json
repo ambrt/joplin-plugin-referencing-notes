@@ -11,7 +11,6 @@
     "prepare": "npm run dist",
     "update": "npm install -g generator-joplin && yo joplin --update",
     "run": "~/.joplin/Joplin.AppImage --env dev"
-    
   },
   "keywords": [
     "joplin-plugin"

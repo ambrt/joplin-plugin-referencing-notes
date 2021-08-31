@@ -77,6 +77,13 @@ joplin.plugins.register({
 				section: 'myBacklinksCustomSection',
 				public: false,
 				label: "Ignore notes list"
+			},
+			myBacklinksCustomSettingShowIconOnBacklinks: {
+				value: false,
+				type:3,
+				section: 'myBacklinksCustomSection',
+				public: true,
+				label: "Show Joplin icon before backlinks (restart Joplin for effect in panel)"
 			}
 		};
 
@@ -95,6 +102,7 @@ joplin.plugins.register({
 			await joplin.views.panels.setHtml(panel, "<h3>Change notes back and forth if you see this</h3>");
 			//await panels.addScript(view, './webview.js');
 			await joplin.views.panels.addScript(panel, './panel.css');
+			
 			await joplin.views.panels.show(panel)
 		}
 		else {
@@ -310,9 +318,12 @@ joplin.plugins.register({
 				let page = 1
 				let referenceHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
 				let hideIfNoBacklinks = await joplin.settings.value('myBacklinksCustomHideBacklinksIfNoneAuto');
+				let showIcon = await joplin.settings.value('myBacklinksCustomSettingShowIconOnBacklinks');
+				let joplinIcon = showIcon ? `<span class="resource-icon fa-joplin"></span>` :"";
 				let notesHtml
 				let references = ""
 				let thereAreAutoBacklinks = false
+				
 				while (has_more) {
 					notes = await joplin.data.get(['search'], { query: data.id, fields: ['id', 'title', 'body'], page: page });
 					console.log(notes)
@@ -325,8 +336,8 @@ joplin.plugins.register({
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 						let inIgnoreList = ignoreListArray.includes(element.id)
 						if (!(ignore || inIgnoreList)) {
-
-							references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
+							
+							references = references + "" + `${joplinIcon}<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
 						}
 
@@ -401,6 +412,12 @@ joplin.plugins.register({
 				let page = 1
 				let panelHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
 				let panelLinksFontSize =await joplin.settings.value('myBacklinksCustomSettingPanelFontAnchors');
+				let showIcon = await joplin.settings.value('myBacklinksCustomSettingShowIconOnBacklinks');
+				
+				let joplinIcon = showIcon ? `<span class="resource-icon fa-joplin"></span>` :"";
+				
+			
+				
 				let references = ""
 				let thereAreAutoBacklinks = false
 				while (has_more) {
@@ -418,9 +435,11 @@ joplin.plugins.register({
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
 						let inIgnoreList = ignoreListArray.includes(element.id)
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
+						
+						
 						if (!(ignore || inIgnoreList)) {
 
-							references = references + "" + `<a href="#" onclick="webviewApi.postMessage({type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
+							references = references + "" + `<a href="#" onclick="webviewApi.postMessage({type:'openNote',noteId:'${element.id}'})">${joplinIcon}${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
 						}
 

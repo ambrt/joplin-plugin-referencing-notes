@@ -22,5 +22,14 @@ a {
     width: 1.2em;
     height: 1.4em;
     margin-right: 0.4em;
-    background-color: rgb(166, 166, 255);
+    
+}
+
+.dark {
+	background-color: rgb(166, 166, 255);
+	
+}
+
+.light {
+	background-color: rgb(21, 91, 218);
 }

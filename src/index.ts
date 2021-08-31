@@ -320,7 +320,7 @@ joplin.plugins.register({
 				let hideIfNoBacklinks = await joplin.settings.value('myBacklinksCustomHideBacklinksIfNoneAuto');
 				let showIcon = await joplin.settings.value('myBacklinksCustomSettingShowIconOnBacklinks');
 				let joplinIcon = showIcon ? `<span class="resource-icon fa-joplin"></span>` :"";
-				let notesHtml
+				let notesHtml;
 				let references = ""
 				let thereAreAutoBacklinks = false
 				
@@ -412,9 +412,14 @@ joplin.plugins.register({
 				let page = 1
 				let panelHeader = await joplin.settings.value('myBacklinksCustomSettingAutoHeader');
 				let panelLinksFontSize =await joplin.settings.value('myBacklinksCustomSettingPanelFontAnchors');
+
+				// Show icon
 				let showIcon = await joplin.settings.value('myBacklinksCustomSettingShowIconOnBacklinks');
-				
-				let joplinIcon = showIcon ? `<span class="resource-icon fa-joplin"></span>` :"";
+				//// Make icon different according to dark/light theme
+				let themeId = await joplin.settings.globalValue("theme");
+				let themeType = [1,3].includes(themeId) ? "light" : "dark";
+
+				let joplinIcon = showIcon ? `<span class="resource-icon fa-joplin ${themeType}"></span>` :"";
 				
 			
 				

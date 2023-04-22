@@ -20,7 +20,7 @@ module.exports = {
                     //return `<div id="backref">back</div><a href="#" onclick="let cont='asdf';async function a(){cont=await webviewApi.executeCommand('getFun');webviewApi.executeCommand('getFun').then(res=>console.log(res));document.getElementById('backref').innerHTML=cont};a();">asdf</a>`
                   return `
                     <div id="backs"></div>
-                    <style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"/>
+                    <style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"></style>
                 `;
                 //return `<div id="backref">back</div><a href="#" onclick="document.getElementById('backref').innerHTML='myasdf';">asdf</a>`
                     

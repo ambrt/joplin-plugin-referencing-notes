@@ -4,30 +4,35 @@
   "homepage": "https://discourse.joplinapp.org/t/insert-referencing-notes-backlinks-plugin/13632",
   "description": "",
   "scripts": {
-    "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
+    "dist": "webpack --env joplin-plugin-config=buildMain && webpack --env joplin-plugin-config=buildExtraScripts && webpack --env joplin-plugin-config=createArchive",
     "postinstall": "npm run dist",
     "distrun": "npm run dist && ~/.joplin/Joplin.AppImage --env dev",
     "distrun2": "npm run dist && ~/Downloads/Joplin-2.3.5.AppImage --env dev",
     "prepare": "npm run dist",
-    "update": "npm install -g generator-joplin && yo joplin --update",
-    "run": "~/.joplin/Joplin.AppImage --env dev"
+    "update": "npm install -g generator-joplin && yo joplin --node-package-manager npm --update --force",
+    "run": "~/.joplin/Joplin.AppImage --env dev",
+    "updateVersion": "webpack --env joplin-plugin-config=updateVersion"
   },
   "keywords": [
     "joplin-plugin"
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^14.0.14",
-    "copy-webpack-plugin": "^6.1.0",
-    "fs-extra": "^9.0.1",
-    "glob": "^7.1.6",
+    "@types/node": "^18.7.13",
+    "copy-webpack-plugin": "^11.0.0",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
     "on-build-webpack": "^0.1.0",
-    "tar": "^6.0.5",
-    "ts-loader": "^7.0.5",
-    "typescript": "^3.9.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
+    "tar": "^6.1.11",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.8.2",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
     "chalk": "^4.1.0",
-    "yargs": "^16.2.0"
-  }
+    "yargs": "^16.2.0",
+    "@joplin/lib": "~2.9"
+  },
+  "files": [
+    "publish"
+  ]
 }

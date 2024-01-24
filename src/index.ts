@@ -149,9 +149,14 @@ joplin.plugins.register({
 					for (let i = 0; i < notes.items.length; i++) {
 						let element = notes.items[i];
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
+
+						// Since Joplin 2.13.4, searching for a note ID returns the original note if the ID isn't found
+						// listed in any other notes' contents. Ignore as we don't want to backlink to ourselves.
+						let isSameNote = element.id.localeCompare(data.id) == 0
+
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 						let inIgnoreList = ignoreListArray.includes(element.id)
-						if (!(ignore || inIgnoreList)) {
+						if (!(ignore || inIgnoreList || isSameNote)) {
 							references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 							thereAreNotes = true
 						}
@@ -333,9 +338,13 @@ joplin.plugins.register({
 						
 						let ignore = element.body.includes("<!-- backlinks-ignore -->")
 
+						// Since Joplin 2.13.4, searching for a note ID returns the original note if the ID isn't found
+						// listed in any other notes' contents. Ignore as we don't want to backlink to ourselves.
+						let isSameNote = element.id.localeCompare(data.id) == 0
+
 						//references = references + "\n" + `[${escapeTitleText(element.title)}](:/${element.id})`;
 						let inIgnoreList = ignoreListArray.includes(element.id)
-						if (!(ignore || inIgnoreList)) {
+						if (!(ignore || inIgnoreList || isSameNote)) {
 							
 							references = references + "" + `${joplinIcon}<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',noteId:'${element.id}'})">${escapeTitleText(element.title)}</a><br>`;
 							thereAreAutoBacklinks = true
